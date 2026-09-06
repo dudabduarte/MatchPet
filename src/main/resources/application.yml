@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: matchpet
+  main:
+    banner-mode: off
+    web-application-type: none
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/matchpet}
+
+matchpet:
+  cli:
+    enabled: true
+
+logging:
+  level:
+    root: WARN
+    org.mongodb.driver: WARN
+    org.springframework.context.support: ERROR
