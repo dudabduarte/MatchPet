@@ -1,0 +1,509 @@
+diff --git a/HARNESS.md b/HARNESS.md
+new file mode 100644
+index 0000000..9671e5d
+--- /dev/null
++++ b/HARNESS.md
+@@ -0,0 +1,29 @@
++# Validação
++
++Requisitos:
++
++- JDK 21;
++- MongoDB disponível em `localhost:27017`.
++
++## Testar
++
++```powershell
++.\mvnw.cmd clean verify
++```
++
++## Executar
++
++```powershell
++.\mvnw.cmd spring-boot:run
++```
++
++A conexão padrão é `mongodb://localhost:27017/matchpet`. Para alterá-la, use a variável de ambiente `MONGODB_URI`.
++
++## Gerar o JAR
++
++```powershell
++.\mvnw.cmd clean package
++java -jar target\matchpet-1.0.0.jar
++```
++
++Verifique pelo menu as operações de listar, buscar, cadastrar, atualizar e excluir. No MongoDB Compass, confirme os dados no banco `matchpet`, coleção `pets`.
+diff --git a/README.md b/README.md
+index 64e15d3..f81f500 100644
+--- a/README.md
++++ b/README.md
+@@ -1,29 +1,103 @@
+ # MatchPet
+ 
+-PoC em Java e MongoDB para cadastrar, consultar, atualizar e excluir pets pela linha de comando.
++PoC simples em Java e MongoDB para demonstrar operações CRUD pela linha de comando.
+ 
+-## Primeira entrega
++## Escopo
+ 
+-Uma única coleção, `pets`, com documentos simples e homogêneos: nome, espécie e idade, além do identificador.
++O sistema trabalha com:
+ 
+-Esta etapa contém a estrutura Maven, o modelo Pet, o repositório e a configuração MongoDB.
++- uma única coleção NoSQL: `pets`;
++- documentos homogêneos e sem objetos aninhados;
++- cadastro, listagem, busca, atualização e exclusão;
++- uma interface de linha de comando, sem frontend.
+ 
+-As próximas etapas acrescentam o serviço CRUD e seus testes, depois a CLI com testes e instruções de demonstração. O menu ainda não está disponível nesta etapa.
++Cada pet possui os campos de negócio `nome`, `especie` e `idade`, além do identificador:
+ 
+-## Requisitos
++```json
++{
++  "_id": "67c123...",
++  "nome": "Luna",
++  "especie": "Cachorro",
++  "idade": 3
++}
++```
++
++O Spring Data também grava o campo técnico de texto `_class`. Os documentos continuam simples e homogêneos.
++
++## Executar
++
++É necessário ter:
++
++- JDK 21;
++- MongoDB Community Server instalado e em execução.
++
++Por padrão, o sistema usa:
++
++```text
++mongodb://localhost:27017/matchpet
++```
++
++No Windows, abra o terminal na pasta extraída do projeto, onde estão `pom.xml` e `mvnw.cmd`:
++
++```powershell
++.\mvnw.cmd spring-boot:run
++```
++
++No Linux ou macOS:
++
++```bash
++./mvnw spring-boot:run
++```
+ 
+-- JDK 21.
+-- MongoDB Community Server em execução para usar a aplicação.
++Para usar outra conexão, defina a variável `MONGODB_URI` antes de iniciar:
+ 
+-Conexão padrão: `mongodb://localhost:27017/matchpet`.
+-Para outra conexão, configure a variável de ambiente `MONGODB_URI`.
++```powershell
++$env:MONGODB_URI = "mongodb://localhost:27017/matchpet"
++.\mvnw.cmd spring-boot:run
++```
++
++No MongoDB Compass, conecte-se a `mongodb://localhost:27017/matchpet` e abra a coleção `pets`.
++
++O Compass é um cliente: o servidor MongoDB precisa estar em execução. O MatchPet não inicia nem encerra o servidor. Ao sair da CLI, seus dados permanecem no banco.
++
++## Menu
++
++```text
++1 - Listar pets
++2 - Buscar pet
++3 - Cadastrar pet
++4 - Atualizar pet
++5 - Excluir pet
++0 - Sair
++```
++
++A idade deve ser um inteiro maior ou igual a zero. Ao editar, pressione Enter para manter um campo. A exclusão exige confirmação com `s`.
++
++O banco começa vazio; cadastre seus pets pelo menu. Nenhum exemplo é recriado automaticamente depois de uma exclusão.
++
++## Demonstração da primeira entrega
++
++1. Cadastre Luna, espécie Cachorro, idade 3, pela opção 3.
++2. Liste os pets na opção 1 e copie o ID exibido.
++3. Busque esse ID na opção 2.
++4. Na opção 4, altere a idade para 4, mantendo os demais campos com Enter.
++5. Saia, abra novamente o programa e confira que a alteração foi persistida.
++6. Exclua o pet pela opção 5 e confirme com `s`. Confira a listagem vazia.
++
++As operações usam somente a coleção `pets`. Não são necessários cadastros de pessoas, abrigos ou solicitações para esta entrega.
++
++## Estrutura
++
++```text
++CLI -> PetService -> PetRepository -> coleção pets
++```
+ 
+-## Compilar
++O código usa apenas um modelo, um repositório e um serviço. Não há relacionamentos, subdocumentos, DTOs ou mappers.
+ 
+-Na pasta que contém `pom.xml`, execute no PowerShell:
++## Testes
+ 
+ ```powershell
+ .\mvnw.cmd clean verify
+ ```
+ 
+-Nesta etapa o comando compila e gera o JAR; os testes serão acrescentados nas próximas contribuições.
++Os testes unitários verificam o serviço e a CLI sem depender do banco em execução.
+diff --git a/docs/modelagem.md b/docs/modelagem.md
+new file mode 100644
+index 0000000..c894b8f
+--- /dev/null
++++ b/docs/modelagem.md
+@@ -0,0 +1,25 @@
++# Modelagem
++
++O banco possui uma única coleção chamada `pets`.
++
++Todos os documentos têm a mesma estrutura simples:
++
++```json
++{
++  "_id": "67c123...",
++  "nome": "Luna",
++  "especie": "Cachorro",
++  "idade": 3
++}
++```
++
++| Campo | Tipo | Descrição |
++|---|---|---|
++| `_id` | ObjectId | identificador gerado ao salvar, exibido como texto na CLI |
++| `nome` | texto | nome do pet |
++| `especie` | texto | espécie do pet |
++| `idade` | número inteiro | idade em anos |
++
++Não há outras coleções, relacionamentos, listas ou objetos aninhados.
++
++O Spring Data acrescenta o campo técnico de texto `_class` com o nome da classe Pet. Todos os pets são gravados com o mesmo formato.
+diff --git a/src/main/java/com/matchpet/cli/MatchPetCli.java b/src/main/java/com/matchpet/cli/MatchPetCli.java
+new file mode 100644
+index 0000000..b77a1cc
+--- /dev/null
++++ b/src/main/java/com/matchpet/cli/MatchPetCli.java
+@@ -0,0 +1,164 @@
++package com.matchpet.cli;
++
++import java.io.InputStream;
++import java.io.PrintStream;
++import java.util.List;
++import java.util.NoSuchElementException;
++import java.util.Scanner;
++
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.boot.CommandLineRunner;
++import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
++import org.springframework.stereotype.Component;
++import org.springframework.dao.DataAccessException;
++
++import com.matchpet.model.Pet;
++import com.matchpet.service.PetService;
++
++@Component
++@ConditionalOnProperty(name = "matchpet.cli.enabled", havingValue = "true", matchIfMissing = true)
++public class MatchPetCli implements CommandLineRunner {
++
++    private final PetService service;
++    private final Scanner scanner;
++    private final PrintStream out;
++
++    @Autowired
++    public MatchPetCli(PetService service) {
++        this(service, System.in, System.out);
++    }
++
++    MatchPetCli(PetService service, InputStream input, PrintStream out) {
++        this.service = service;
++        this.scanner = new Scanner(input);
++        this.out = out;
++    }
++
++    @Override
++    public void run(String... args) {
++        out.println("\n=== MatchPet ===");
++        boolean executando = true;
++        while (executando) {
++            imprimirMenu();
++            try {
++                executando = executar(ler("Escolha uma opção: "));
++            } catch (NoSuchElementException exception) {
++                out.println("\nEntrada encerrada. A operação em andamento foi cancelada.");
++                executando = false;
++            } catch (DataAccessException exception) {
++                out.println("Não foi possível acessar o MongoDB. Verifique se o servidor está ativo e se MONGODB_URI está correta.");
++            } catch (IllegalArgumentException exception) {
++                out.println("Erro: " + exception.getMessage());
++            }
++        }
++        out.println("Até logo!");
++    }
++
++    private boolean executar(String opcao) {
++        switch (opcao) {
++            case "1" -> listar();
++            case "2" -> buscar();
++            case "3" -> cadastrar();
++            case "4" -> atualizar();
++            case "5" -> excluir();
++            case "0" -> {
++                return false;
++            }
++            default -> out.println("Opção inválida.");
++        }
++        return true;
++    }
++
++    private void imprimirMenu() {
++        out.println("""
++
++                1 - Listar pets
++                2 - Buscar pet
++                3 - Cadastrar pet
++                4 - Atualizar pet
++                5 - Excluir pet
++                0 - Sair
++                """);
++    }
++
++    private void listar() {
++        List<Pet> pets = service.listar();
++        if (pets.isEmpty()) {
++            out.println("Nenhum pet cadastrado.");
++            return;
++        }
++        out.println("ID | Nome | Espécie | Idade");
++        pets.forEach(this::imprimir);
++        out.println("Total: " + pets.size() + " pet(s).");
++    }
++
++    private void buscar() {
++        imprimir(service.buscar(ler("ID do pet: ")));
++    }
++
++    private void cadastrar() {
++        Pet pet = service.cadastrar(
++                ler("Nome: "),
++                ler("Espécie: "),
++                lerIdade());
++        out.println("Pet cadastrado com ID: " + pet.getId());
++    }
++
++    private void atualizar() {
++        String id = ler("ID do pet: ");
++        Pet atual = service.buscar(id);
++        imprimir(atual);
++        out.println("Pressione Enter para manter o valor atual.");
++        String nome = ler("Nome [" + atual.getNome() + "]: ");
++        String especie = ler("Espécie [" + atual.getEspecie() + "]: ");
++        Pet pet = service.atualizar(
++                id,
++                nome.isBlank() ? atual.getNome() : nome,
++                especie.isBlank() ? atual.getEspecie() : especie,
++                lerIdade(atual.getIdade()));
++        out.println("Pet atualizado: " + pet.getNome());
++    }
++
++    private void excluir() {
++        String id = ler("ID do pet: ");
++        imprimir(service.buscar(id));
++        if (!ler("Confirmar exclusão? (s/N): ").equalsIgnoreCase("s")) {
++            out.println("Exclusão cancelada.");
++            return;
++        }
++        service.excluir(id);
++        out.println("Pet excluído.");
++    }
++
++    private void imprimir(Pet pet) {
++        out.printf("%s | %s | %s | %d ano(s)%n",
++                pet.getId(), pet.getNome(), pet.getEspecie(), pet.getIdade());
++    }
++
++    private String ler(String mensagem) {
++        out.print(mensagem);
++        return scanner.nextLine().trim();
++    }
++
++    private int lerIdade() {
++        return lerIdade(null);
++    }
++
++    private int lerIdade(Integer atual) {
++        while (true) {
++            String valor = ler(atual == null ? "Idade em anos: " : "Idade [" + atual + "]: ");
++            if (valor.isBlank() && atual != null) {
++                return atual;
++            }
++            try {
++                int idade = Integer.parseInt(valor);
++                if (idade >= 0) {
++                    return idade;
++                }
++            } catch (NumberFormatException exception) {
++                // Solicita novamente sem perder os outros campos digitados.
++            }
++            out.println("Informe uma idade inteira maior ou igual a zero.");
++        }
++    }
++}
+diff --git a/src/test/java/com/matchpet/cli/MatchPetCliTest.java b/src/test/java/com/matchpet/cli/MatchPetCliTest.java
+new file mode 100644
+index 0000000..9125705
+--- /dev/null
++++ b/src/test/java/com/matchpet/cli/MatchPetCliTest.java
+@@ -0,0 +1,146 @@
++package com.matchpet.cli;
++
++import static org.junit.jupiter.api.Assertions.assertTrue;
++import static org.mockito.Mockito.verify;
++import static org.mockito.Mockito.never;
++import static org.mockito.Mockito.verifyNoInteractions;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.anyInt;
++import static org.mockito.Mockito.when;
++
++import java.io.ByteArrayInputStream;
++import java.io.ByteArrayOutputStream;
++import java.io.PrintStream;
++import java.nio.charset.StandardCharsets;
++import java.util.List;
++
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.ExtendWith;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++import org.springframework.dao.DataAccessResourceFailureException;
++import org.mockito.Mock;
++import org.mockito.junit.jupiter.MockitoExtension;
++
++import com.matchpet.model.Pet;
++import com.matchpet.service.PetService;
++
++@ExtendWith(MockitoExtension.class)
++class MatchPetCliTest {
++
++    @Mock
++    private PetService service;
++
++    @Test
++    void deveExecutarCrudPelaCli() {
++        Pet luna = new Pet("1", "Luna", "Cachorro", 3);
++        Pet mia = new Pet("1", "Mia", "Gato", 4);
++        when(service.listar()).thenReturn(List.of(luna));
++        when(service.buscar("1")).thenReturn(luna);
++        when(service.cadastrar("Luna", "Cachorro", 3)).thenReturn(luna);
++        when(service.atualizar("1", "Mia", "Gato", 4)).thenReturn(mia);
++
++        String entrada = String.join("\n",
++                "1",
++                "2", "1",
++                "3", "Luna", "Cachorro", "3",
++                "4", "1", "Mia", "Gato", "4",
++                "5", "1", "s",
++                "9",
++                "0") + "\n";
++        ByteArrayOutputStream saida = new ByteArrayOutputStream();
++        MatchPetCli cli = new MatchPetCli(service,
++                new ByteArrayInputStream(entrada.getBytes(StandardCharsets.UTF_8)),
++                new PrintStream(saida, true, StandardCharsets.UTF_8));
++
++        cli.run();
++
++        String texto = saida.toString(StandardCharsets.UTF_8);
++        assertTrue(texto.contains("Luna | Cachorro | 3 ano(s)"));
++        assertTrue(texto.contains("Pet cadastrado com ID: 1"));
++        assertTrue(texto.contains("Pet atualizado: Mia"));
++        assertTrue(texto.contains("Pet excluído."));
++        assertTrue(texto.contains("Opção inválida."));
++        assertTrue(texto.contains("Até logo!"));
++        verify(service).excluir("1");
++    }
++
++    @Test
++    void deveExibirListaVaziaEErro() {
++        when(service.listar()).thenReturn(List.of());
++        when(service.buscar("999")).thenThrow(new IllegalArgumentException("Pet não encontrado: 999"));
++        String entrada = String.join("\n", "1", "2", "999", "0") + "\n";
++        ByteArrayOutputStream saida = new ByteArrayOutputStream();
++        MatchPetCli cli = new MatchPetCli(service,
++                new ByteArrayInputStream(entrada.getBytes(StandardCharsets.UTF_8)),
++                new PrintStream(saida, true, StandardCharsets.UTF_8));
++
++        cli.run();
++
++        String texto = saida.toString(StandardCharsets.UTF_8);
++        assertTrue(texto.contains("Nenhum pet cadastrado."));
++        assertTrue(texto.contains("Erro: Pet não encontrado: 999"));
++    }
++
++    @Test
++    void deveSolicitarIdadeNovamenteSemPerderDados() {
++        when(service.cadastrar("Luna", "Gato", 0)).thenReturn(new Pet("1", "Luna", "Gato", 0));
++
++        String texto = executar("3\nLuna\nGato\nabc\n-1\n0\n0\n");
++
++        assertTrue(texto.contains("Informe uma idade inteira maior ou igual a zero."));
++        verify(service).cadastrar("Luna", "Gato", 0);
++    }
++
++    @Test
++    void deveManterCamposVaziosNaEdicao() {
++        Pet pet = new Pet("1", "Luna", "Gato", 3);
++        when(service.buscar("1")).thenReturn(pet);
++        when(service.atualizar("1", "Luna", "Gato", 3)).thenReturn(pet);
++
++        executar("4\n1\n\n\n\n0\n");
++
++        verify(service).atualizar("1", "Luna", "Gato", 3);
++    }
++
++    @ParameterizedTest
++    @ValueSource(strings = {"", "n", "sim", "qualquer"})
++    void deveCancelarExclusaoSemConfirmacaoExplicita(String resposta) {
++        when(service.buscar("1")).thenReturn(new Pet("1", "Luna", "Gato", 3));
++
++        assertTrue(executar("5\n1\n" + resposta + "\n0\n").contains("Exclusão cancelada."));
++
++        verify(service, never()).excluir(any());
++    }
++
++    @ParameterizedTest
++    @ValueSource(strings = {"", "3\n", "3\nLuna\n", "3\nLuna\nGato\n"})
++    void deveEncerrarEntradaSemCadastrarDadosParciais(String entrada) {
++        assertTrue(executar(entrada).contains("Até logo!"));
++        verifyNoInteractions(service);
++    }
++
++    @Test
++    void deveCancelarEdicaoSeEntradaTerminar() {
++        when(service.buscar("1")).thenReturn(new Pet("1", "Luna", "Gato", 3));
++
++        executar("4\n1\nNova Luna\n");
++
++        verify(service, never()).atualizar(any(), any(), any(), anyInt());
++    }
++
++    @Test
++    void deveOrientarQuandoBancoEstiverIndisponivel() {
++        when(service.listar()).thenThrow(new DataAccessResourceFailureException("detalhes internos"));
++
++        assertTrue(executar("1\n0\n").contains("Não foi possível acessar o MongoDB."));
++    }
++
++    private String executar(String entrada) {
++        ByteArrayOutputStream saida = new ByteArrayOutputStream();
++        new MatchPetCli(service,
++                new ByteArrayInputStream(entrada.getBytes(StandardCharsets.UTF_8)),
++                new PrintStream(saida, true, StandardCharsets.UTF_8)).run();
++        return saida.toString(StandardCharsets.UTF_8);
++    }
++}
