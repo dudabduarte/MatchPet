@@ -3,13 +3,14 @@
   'use strict';
 
   const STORAGE = {
-    pets: 'matchpet.pets.v1',
     favorites: 'matchpet.favorites.v1',
     requests: 'matchpet.requests.v1'
   };
 
+  const API_URL = 'http://localhost:8080/api/pets';
+
   const photos = {
-    tobias: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=900&q=82',
+    tobias: 'imagem/cachorro-inteligente.jpeg',
     luna: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=900&q=82',
     kiko: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=900&q=82',
     mel: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=900&q=82',
@@ -21,179 +22,6 @@
     kiwi: 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?auto=format&fit=crop&w=900&q=82'
   };
 
-  const seedPets = [
-    {
-      id: 'tobias',
-      name: 'Tobias',
-      species: 'Cachorro',
-      breed: 'Vira-lata caramelo',
-      age: 2,
-      ageGroup: 'adulto',
-      size: 'Médio',
-      sex: 'Macho',
-      city: 'São Paulo',
-      state: 'SP',
-      image: photos.tobias,
-      description: 'Um grandão carinhoso que adora passeios e colo. Já está vacinado e prontinho para conhecer a família dele.',
-      traits: ['Carinhoso', 'Vacinado', 'Gosta de passear'],
-      shelter: 'Amigos de Patas',
-      status: 'Pronto para adoção'
-    },
-    {
-      id: 'luna',
-      name: 'Luna',
-      species: 'Gato',
-      breed: 'Sem raça definida',
-      age: 1,
-      ageGroup: 'adulto',
-      size: 'Pequeno',
-      sex: 'Fêmea',
-      city: 'Campinas',
-      state: 'SP',
-      image: photos.luna,
-      description: 'Curiosa e tranquila, Luna ama uma janela ensolarada e companhia para suas sonecas.',
-      traits: ['Tranquila', 'Castrada', 'Ama carinho'],
-      shelter: 'Casa Mia',
-      status: 'Pronta para adoção'
-    },
-    {
-      id: 'kiko',
-      name: 'Kiko',
-      species: 'Cachorro',
-      breed: 'Beagle',
-      age: 4,
-      ageGroup: 'adulto',
-      size: 'Médio',
-      sex: 'Macho',
-      city: 'São Paulo',
-      state: 'SP',
-      image: photos.kiko,
-      description: 'Cheio de energia e com o rabinho sempre abanando. Kiko é o parceiro ideal para aventuras.',
-      traits: ['Brincalhão', 'Sociável', 'Vacinado'],
-      shelter: 'Amigos de Patas',
-      status: 'Pronto para adoção'
-    },
-    {
-      id: 'mel',
-      name: 'Mel',
-      species: 'Gato',
-      breed: 'Sem raça definida',
-      age: 3,
-      ageGroup: 'adulto',
-      size: 'Pequeno',
-      sex: 'Fêmea',
-      city: 'Santos',
-      state: 'SP',
-      image: photos.mel,
-      description: 'Uma gatinha doce que transforma qualquer cantinho em lugar favorito. Convive bem com outros gatos.',
-      traits: ['Dócil', 'Castrada', 'Sociável'],
-      shelter: 'Bigodes & Cia',
-      status: 'Pronta para adoção'
-    },
-    {
-      id: 'nina',
-      name: 'Nina',
-      species: 'Cachorro',
-      breed: 'Vira-lata',
-      age: 5,
-      ageGroup: 'adulto',
-      size: 'Pequeno',
-      sex: 'Fêmea',
-      city: 'Sorocaba',
-      state: 'SP',
-      image: photos.nina,
-      description: 'Pequena no tamanho e enorme no amor. Nina gosta de passeios curtinhos e bons cochilos.',
-      traits: ['Calma', 'Vacinada', 'Adora pessoas'],
-      shelter: 'Lar da Nina',
-      status: 'Pronta para adoção'
-    },
-    {
-      id: 'fred',
-      name: 'Fred',
-      species: 'Cachorro',
-      breed: 'Vira-lata',
-      age: 0,
-      ageGroup: 'filhote',
-      size: 'Pequeno',
-      sex: 'Macho',
-      city: 'Campinas',
-      state: 'SP',
-      image: photos.fred,
-      description: 'Filhote arteiro aprendendo a descobrir o mundo. Procura uma família com muito carinho para dar.',
-      traits: ['Filhote', 'Vacinado', 'Brincalhão'],
-      shelter: 'Casa Mia',
-      status: 'Pronto para adoção'
-    },
-    {
-      id: 'bela',
-      name: 'Bela',
-      species: 'Gato',
-      breed: 'Sem raça definida',
-      age: 8,
-      ageGroup: 'idoso',
-      size: 'Pequeno',
-      sex: 'Fêmea',
-      city: 'São Paulo',
-      state: 'SP',
-      image: photos.bela,
-      description: 'Uma senhora elegante que só precisa de uma caminha macia e alguém para dividir o sofá.',
-      traits: ['Tranquila', 'Castrada', 'Companheira'],
-      shelter: 'Bigodes & Cia',
-      status: 'Pronta para adoção'
-    },
-    {
-      id: 'theo',
-      name: 'Theo',
-      species: 'Cachorro',
-      breed: 'Vira-lata',
-      age: 1,
-      ageGroup: 'adulto',
-      size: 'Grande',
-      sex: 'Macho',
-      city: 'Santos',
-      state: 'SP',
-      image: photos.theo,
-      description: 'Um gigante gentil que ama fazer novos amigos. Está ansioso para encontrar um lar com quintal.',
-      traits: ['Dócil', 'Vacinado', 'Sociável'],
-      shelter: 'Lar da Nina',
-      status: 'Pronto para adoção'
-    },
-    {
-      id: 'pipoca',
-      name: 'Pipoca',
-      species: 'Outros',
-      breed: 'Coelho mini lop',
-      age: 1,
-      ageGroup: 'adulto',
-      size: 'Pequeno',
-      sex: 'Fêmea',
-      city: 'Campinas',
-      state: 'SP',
-      image: photos.pipoca,
-      description: 'Uma coelhinha curiosa e tranquila, que adora explorar e beliscar um pedacinho de cenoura.',
-      traits: ['Tranquila', 'Curiosa', 'Adora cenoura'],
-      shelter: 'Casa Mia',
-      status: 'Pronta para adoção'
-    },
-    {
-      id: 'kiwi',
-      name: 'Kiwi',
-      species: 'Outros',
-      breed: 'Calopsita',
-      age: 2,
-      ageGroup: 'adulto',
-      size: 'Pequeno',
-      sex: 'Macho',
-      city: 'São Paulo',
-      state: 'SP',
-      image: photos.kiwi,
-      description: 'Uma calopsita companheira que gosta de cantarolar e ficar pertinho de quem já conhece.',
-      traits: ['Companheiro', 'Sociável', 'Gosta de cantar'],
-      shelter: 'Amigos de Patas',
-      status: 'Pronto para adoção'
-    }
-  ];
-
   const read = (key, fallback) => {
     try {
       const value = localStorage.getItem(key);
@@ -203,25 +31,8 @@
     }
   };
 
-  let pets = read(STORAGE.pets, null);
-
-  if (!Array.isArray(pets)) {
-    pets = seedPets;
-    localStorage.setItem(STORAGE.pets, JSON.stringify(pets));
-  }
-
-  if (!read('matchpet.other-animals.v1', false)) {
-    ['pipoca', 'kiwi'].forEach(id => {
-      const sample = seedPets.find(pet => pet.id === id);
-
-      if (sample && !pets.some(pet => pet.id === id)) {
-        pets.push(sample);
-      }
-    });
-
-    localStorage.setItem(STORAGE.pets, JSON.stringify(pets));
-    localStorage.setItem('matchpet.other-animals.v1', 'true');
-  }
+  // Os pets agora vêm da API Java.
+  let pets = [];
 
   let favorites = read(STORAGE.favorites, []);
   if (!Array.isArray(favorites)) favorites = [];
@@ -245,19 +56,95 @@
   const formModal = $('#formModal');
 
   const escapeHtml = value =>
-    String(value ?? '').replace(/[&<>"']/g, char => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    })[char]);
+      String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[char]);
 
   const photoStyle = image =>
-    `background-image:url("${escapeHtml(image || photos.tobias)}")`;
+      `background-image:url("${escapeHtml(image || photos.tobias)}")`;
 
-  function savePets() {
-    localStorage.setItem(STORAGE.pets, JSON.stringify(pets));
+  // Comunicação com a API Java.
+  async function apiRequest(url, options = {}) {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || `Erro HTTP: ${response.status}`);
+    }
+
+    if (response.status === 204) {
+      return null;
+    }
+
+    return response.json();
+  }
+
+  // Converte o Pet.java para o formato usado pelo frontend.
+  function converterPet(pet) {
+    const caracteristicas = pet.caracteristicas || [];
+    const idade = pet.idade ?? 0;
+
+    return {
+      id: pet.id,
+      name: pet.nome,
+      species: pet.especie,
+      age: idade,
+
+      city: pet.localizacao?.cidade || '',
+      state: pet.localizacao?.estado || '',
+
+      traits: caracteristicas,
+
+      breed: pet.especie || 'Não informada',
+      size: 'Não informado',
+      sex: '',
+
+      image: photos.tobias,
+      description: caracteristicas.join(', '),
+      shelter: 'Comunidade MatchPet',
+      status: 'Pronto para adoção',
+
+      ageGroup: idade === 0
+          ? 'filhote'
+          : idade < 7
+              ? 'adulto'
+              : 'idoso',
+
+      isMine: true
+    };
+  }
+
+  // Busca os animais cadastrados no banco.
+  async function carregarPets() {
+    try {
+      const dados = await apiRequest(API_URL);
+
+      pets = Array.isArray(dados)
+          ? dados.map(converterPet)
+          : [];
+
+      populateCities();
+      renderPets();
+
+    } catch (error) {
+      console.error('Erro ao carregar pets:', error);
+
+      pets = [];
+      populateCities();
+      renderPets();
+
+      showToast('Não foi possível carregar os pets. Verifique o servidor e o banco de dados.');
+    }
   }
 
   function showToast(message) {
@@ -269,8 +156,8 @@
     clearTimeout(state.toastTimer);
 
     state.toastTimer = setTimeout(
-      () => toast.classList.remove('show'),
-      2600
+        () => toast.classList.remove('show'),
+        2600
     );
   }
 
@@ -287,10 +174,10 @@
     ].sort((a, b) => a.localeCompare(b, 'pt-BR'));
 
     select.innerHTML =
-      '<option value="">Qualquer cidade</option>' +
-      cities.map(city =>
-        `<option value="${escapeHtml(city)}">${escapeHtml(city)}</option>`
-      ).join('');
+        '<option value="">Qualquer cidade</option>' +
+        cities.map(city =>
+            `<option value="${escapeHtml(city)}">${escapeHtml(city)}</option>`
+        ).join('');
 
     if (cities.includes(current)) {
       select.value = current;
@@ -307,18 +194,18 @@
 
     return pets.filter(pet => {
       const searchable =
-        `${pet.name} ${pet.breed} ${pet.city} ${pet.state}`
-          .toLocaleLowerCase('pt-BR');
+          `${pet.name} ${pet.breed} ${pet.city} ${pet.state}`
+              .toLocaleLowerCase('pt-BR');
 
       return (
-        (state.species === 'Todos' || pet.species === state.species) &&
-        (!query || searchable.includes(query)) &&
-        (!location ||
-          `${pet.city} ${pet.state}`.toLocaleLowerCase('pt-BR').includes(location)) &&
-        (!size || pet.size === size) &&
-        (!age || pet.ageGroup === age) &&
-        (!city || pet.city === city) &&
-        (!state.onlyFavorites || favorites.includes(pet.id))
+          (state.species === 'Todos' || pet.species === state.species) &&
+          (!query || searchable.includes(query)) &&
+          (!location ||
+              `${pet.city} ${pet.state}`.toLocaleLowerCase('pt-BR').includes(location)) &&
+          (!size || pet.size === size) &&
+          (!age || pet.ageGroup === age) &&
+          (!city || pet.city === city) &&
+          (!state.onlyFavorites || favorites.includes(pet.id))
       );
     });
   }
@@ -348,14 +235,14 @@
           <div class="pet-title-row">
             <h3>${escapeHtml(pet.name)}</h3>
             <span class="pet-gender">
-              ${pet.sex === 'Macho' ? '♂' : '♀'}
+              ${pet.sex === 'Macho' ? '♂' : pet.sex === 'Fêmea' ? '♀' : ''}
             </span>
           </div>
 
           <div class="pet-meta">
-            ${escapeHtml(pet.breed)} ·
+            ${escapeHtml(pet.breed || pet.species)} ·
             ${pet.age ? `${pet.age} ${pet.age === 1 ? 'ano' : 'anos'}` : 'menos de 1 ano'}
-            · Porte ${escapeHtml(pet.size || 'Médio')}
+            · Porte ${escapeHtml(pet.size || 'Não informado')}
           </div>
 
           <p class="pet-description">
@@ -380,12 +267,12 @@
     petGrid.classList.toggle('hidden', results.length === 0);
 
     $('#resultsCount').textContent = state.onlyFavorites
-      ? `${results.length} ${results.length === 1 ? 'favorito' : 'favoritos'}`
-      : `${results.length} ${results.length === 1 ? 'pet esperando' : 'pets esperando'} por você`;
+        ? `${results.length} ${results.length === 1 ? 'favorito' : 'favoritos'}`
+        : `${results.length} ${results.length === 1 ? 'pet esperando' : 'pets esperando'} por você`;
 
     $('#loadMore').classList.toggle(
-      'hidden',
-      results.length <= state.visibleCount
+        'hidden',
+        results.length <= state.visibleCount
     );
 
     $('#favoritesOnly').classList.toggle('active', state.onlyFavorites);
@@ -413,13 +300,15 @@
 
         <h2 id="petModalTitle">
           Oi, eu sou ${escapeHtml(pet.name)}
-          <span aria-hidden="true">${pet.sex === 'Macho' ? '♂' : '♀'}</span>
+          <span aria-hidden="true">
+            ${pet.sex === 'Macho' ? '♂' : pet.sex === 'Fêmea' ? '♀' : ''}
+          </span>
         </h2>
 
         <div class="modal-meta">
-          ${escapeHtml(pet.breed)} ·
+          ${escapeHtml(pet.breed || pet.species)} ·
           ${pet.age ? `${pet.age} ${pet.age === 1 ? 'ano' : 'anos'}` : 'menos de 1 ano'}
-          · Porte ${escapeHtml(pet.size || 'Médio')}
+          · Porte ${escapeHtml(pet.size || 'Não informado')}
           · ${escapeHtml(pet.city)}${pet.state ? `, ${escapeHtml(pet.state)}` : ''}
         </div>
 
@@ -429,8 +318,8 @@
 
         <div class="modal-tags">
           ${(pet.traits || []).map(trait =>
-            `<span>${escapeHtml(trait)}</span>`
-          ).join('')}
+        `<span>${escapeHtml(trait)}</span>`
+    ).join('')}
         </div>
 
         <div class="shelter-box">
@@ -481,16 +370,16 @@
         </h2>
 
         <p>
-          Preencha os dados do pet. Neste protótipo, o cadastro fica salvo localmente neste navegador.
+          Preencha os dados do animal para cadastrá-lo no MatchPet.
         </p>
 
         <form id="petForm" data-pet-id="${escapeHtml(pet.id || '')}">
           <div class="form-grid">
 
-            <label class="form-field">
+            <label class="form-field full">
               <span>Nome do pet *</span>
               <input
-                name="name"
+                name="nome"
                 required
                 maxlength="40"
                 value="${escapeHtml(pet.name || '')}"
@@ -500,7 +389,8 @@
 
             <label class="form-field">
               <span>Espécie *</span>
-              <select name="species" required>
+              <select name="especie" required>
+                <option value="">Selecione</option>
                 <option value="Cachorro" ${pet.species === 'Cachorro' ? 'selected' : ''}>Cachorro</option>
                 <option value="Gato" ${pet.species === 'Gato' ? 'selected' : ''}>Gato</option>
                 <option value="Outros" ${pet.species === 'Outros' ? 'selected' : ''}>Outros animais</option>
@@ -508,91 +398,52 @@
             </label>
 
             <label class="form-field">
-              <span>Raça</span>
+              <span>Idade em anos *</span>
               <input
-                name="breed"
-                maxlength="50"
-                value="${escapeHtml(pet.breed || '')}"
-                placeholder="Sem raça definida"
-              >
-            </label>
-
-            <label class="form-field">
-              <span>Idade em anos</span>
-              <input
-                name="age"
+                name="idade"
                 type="number"
                 min="0"
                 max="30"
-                value="${escapeHtml(pet.age ?? 1)}"
+                required
+                value="${escapeHtml(pet.age ?? 0)}"
               >
-            </label>
-
-            <label class="form-field">
-              <span>Porte</span>
-              <select name="size">
-                <option ${pet.size === 'Pequeno' ? 'selected' : ''}>Pequeno</option>
-                <option ${!pet.size || pet.size === 'Médio' ? 'selected' : ''}>Médio</option>
-                <option ${pet.size === 'Grande' ? 'selected' : ''}>Grande</option>
-              </select>
-            </label>
-
-            <label class="form-field">
-              <span>Sexo</span>
-              <select name="sex">
-                <option ${pet.sex === 'Fêmea' ? 'selected' : ''}>Fêmea</option>
-                <option ${!pet.sex || pet.sex === 'Macho' ? 'selected' : ''}>Macho</option>
-              </select>
             </label>
 
             <label class="form-field">
               <span>Cidade *</span>
               <input
-                name="city"
+                name="cidade"
                 required
                 maxlength="50"
                 value="${escapeHtml(pet.city || '')}"
-                placeholder="Sua cidade"
+                placeholder="Ex.: Maringá"
               >
             </label>
 
             <label class="form-field">
-              <span>Estado</span>
+              <span>Estado *</span>
               <input
-                name="state"
+                name="estado"
+                required
                 maxlength="2"
+                minlength="2"
                 value="${escapeHtml(pet.state || '')}"
-                placeholder="SP"
+                placeholder="Ex.: PR"
               >
             </label>
 
             <label class="form-field full">
-              <span>Link de uma foto (opcional)</span>
-              <input
-                name="image"
-                type="url"
-                value="${escapeHtml(pet.image || '')}"
-                placeholder="https://..."
-              >
-            </label>
-
-            <label class="form-field full">
-              <span>Conte um pouco sobre ele</span>
+              <span>Características do pet *</span>
               <textarea
-                name="description"
+                name="caracteristicas"
+                required
                 maxlength="300"
-                placeholder="Personalidade, rotina, o que ele gosta..."
-              >${escapeHtml(pet.description || '')}</textarea>
-            </label>
+                placeholder="Separe as características por vírgula. Ex.: Dócil, brincalhão, vacinado"
+              >${escapeHtml((pet.traits || []).join(', '))}</textarea>
 
-            <label class="form-field full">
-              <span>ONG ou responsável</span>
-              <input
-                name="shelter"
-                maxlength="60"
-                value="${escapeHtml(pet.shelter || '')}"
-                placeholder="Nome da ONG"
-              >
+              <small class="field-help">
+                Separe cada característica com uma vírgula.
+              </small>
             </label>
 
           </div>
@@ -603,7 +454,7 @@
           </button>
 
           <p class="form-hint">
-            Os dados ficam no armazenamento local do navegador e não são enviados para nenhum servidor.
+            Os campos correspondem à estrutura de cadastro do Java.
           </p>
         </form>
       </div>
@@ -623,8 +474,8 @@
       const url = new URL(value);
 
       return ['https:', 'http:'].includes(url.protocol)
-        ? url.href
-        : photos.tobias;
+          ? url.href
+          : photos.tobias;
     } catch {
       return photos.tobias;
     }
@@ -713,12 +564,12 @@
       const id = favoriteButton.dataset.favorite;
 
       favorites = favorites.includes(id)
-        ? favorites.filter(item => item !== id)
-        : [...favorites, id];
+          ? favorites.filter(item => item !== id)
+          : [...favorites, id];
 
       localStorage.setItem(
-        STORAGE.favorites,
-        JSON.stringify(favorites)
+          STORAGE.favorites,
+          JSON.stringify(favorites)
       );
 
       renderPets();
@@ -732,7 +583,8 @@
     }
   });
 
-  document.addEventListener('click', event => {
+  // Ações de edição, exclusão e abertura de formulários.
+  document.addEventListener('click', async event => {
     const featured = event.target.closest('[data-pet]');
 
     if (featured) {
@@ -764,21 +616,31 @@
     const remove = event.target.closest('[data-delete]');
 
     if (remove) {
-      pets = pets.filter(pet => pet.id !== remove.dataset.delete);
-      favorites = favorites.filter(id => id !== remove.dataset.delete);
+      const id = remove.dataset.delete;
 
-      savePets();
+      try {
+        await apiRequest(`${API_URL}/${id}`, {
+          method: 'DELETE'
+        });
 
-      localStorage.setItem(
-        STORAGE.favorites,
-        JSON.stringify(favorites)
-      );
+        pets = pets.filter(pet => pet.id !== id);
+        favorites = favorites.filter(item => item !== id);
 
-      petModal.close();
-      populateCities();
-      renderPets();
+        localStorage.setItem(
+            STORAGE.favorites,
+            JSON.stringify(favorites)
+        );
 
-      showToast('Cadastro removido deste navegador.');
+        petModal.close();
+        populateCities();
+        renderPets();
+
+        showToast('Pet removido com sucesso!');
+
+      } catch (error) {
+        console.error('Erro ao excluir pet:', error);
+        showToast('Não foi possível excluir o pet.');
+      }
     }
   });
 
@@ -789,7 +651,6 @@
       }
     });
   });
-
 
   $$('.filter-tab').forEach(button => {
     button.addEventListener('click', () => {
@@ -843,8 +704,8 @@
 
     $$('.filter-tab').forEach(tab => {
       tab.classList.toggle(
-        'selected',
-        tab.dataset.species === 'Todos'
+          'selected',
+          tab.dataset.species === 'Todos'
       );
     });
 
@@ -881,15 +742,18 @@
       $('#mainNav').classList.remove('open');
 
       $('#menuToggle').setAttribute(
-        'aria-expanded',
-        'false'
+          'aria-expanded',
+          'false'
       );
 
       openPetForm();
     });
   });
 
-  $('#formModalContent').addEventListener('submit', event => {
+  // Cadastro, edição e formulário de interesse.
+  $('#formModalContent').addEventListener('submit', async event => {
+
+    // Cadastro ou edição de um pet.
     if (event.target.id === 'petForm') {
       event.preventDefault();
 
@@ -900,61 +764,74 @@
       const data = new FormData(form);
       const existingId = form.dataset.petId;
 
-      const old = pets.find(pet => pet.id === existingId);
+      const nome = data.get('nome').trim();
+      const especie = data.get('especie');
+      const idade = Number.parseInt(data.get('idade'), 10);
 
-      const age = Math.max(
-        0,
-        Number.parseInt(data.get('age') || '0', 10) || 0
-      );
+      const cidade = data.get('cidade').trim();
+      const estado = data.get('estado').trim().toUpperCase();
 
-      const pet = {
-        ...(old || {}),
+      const caracteristicas = data.get('caracteristicas')
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item.length > 0);
 
-        id: existingId ||
-          `pet-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-
-        name: data.get('name').trim(),
-        species: data.get('species'),
-        breed: data.get('breed').trim() || 'Sem raça definida',
-        age,
-
-        ageGroup: age === 0
-          ? 'filhote'
-          : age < 7
-            ? 'adulto'
-            : 'idoso',
-
-        size: data.get('size'),
-        sex: data.get('sex'),
-        city: data.get('city').trim(),
-        state: data.get('state').trim().toUpperCase(),
-        image: safeImageUrl(data.get('image').trim()),
-
-        description: data.get('description').trim() ||
-          'Um novo amigo procurando um lar cheio de carinho.',
-
-        traits: old?.traits || ['Pronto para conhecer você'],
-        shelter: data.get('shelter').trim() || 'Comunidade MatchPet',
-        status: 'Pronto para adoção',
-        isMine: true
+      // Estrutura esperada pelo PetController.java.
+      const dadosJava = {
+        nome: nome,
+        especie: especie,
+        idade: idade,
+        cidade: cidade,
+        estado: estado,
+        caracteristicas: caracteristicas
       };
 
-      pets = old
-        ? pets.map(item => item.id === existingId ? pet : item)
-        : [pet, ...pets];
+      try {
+        let petSalvo;
 
-      savePets();
-      populateCities();
-      formModal.close();
-      resetFilters();
+        if (existingId) {
+          // Atualiza o pet na API.
+          petSalvo = await apiRequest(`${API_URL}/${existingId}`, {
+            method: 'PUT',
+            body: JSON.stringify(dadosJava)
+          });
 
-      showToast(
-        old
-          ? 'Cadastro atualizado com carinho!'
-          : `${pet.name} agora está no MatchPet!`
-      );
+          pets = pets.map(item =>
+              item.id === existingId
+                  ? converterPet(petSalvo)
+                  : item
+          );
+
+        } else {
+          // Cadastra o pet na API.
+          petSalvo = await apiRequest(API_URL, {
+            method: 'POST',
+            body: JSON.stringify(dadosJava)
+          });
+
+          pets.unshift(converterPet(petSalvo));
+        }
+
+        populateCities();
+
+        formModal.close();
+        resetFilters();
+
+        showToast(
+            existingId
+                ? 'Cadastro atualizado com carinho!'
+                : `${nome} agora está no MatchPet!`
+        );
+
+      } catch (error) {
+        console.error('Erro ao salvar pet:', error);
+        showToast('Não foi possível salvar. Verifique o servidor e o banco de dados.');
+      }
+
+      return;
     }
 
+    // Formulário de interesse na adoção.
     if (event.target.id === 'interestForm') {
       event.preventDefault();
 
@@ -964,54 +841,32 @@
 
       const data = new FormData(form);
 
-      const pet = pets.find(
-        item => item.id === form.dataset.petId
-      );
-
-      requests.push({
-        id: `interest-${Date.now()}`,
+      const request = {
+        id: `request-${Date.now()}`,
         petId: form.dataset.petId,
-        petName: pet?.name || '',
         name: data.get('name').trim(),
         email: data.get('email').trim(),
         city: data.get('city').trim(),
         message: data.get('message').trim(),
-        createdAt: new Date().toISOString()
-      });
+        date: new Date().toISOString()
+      };
+
+      requests.push(request);
 
       localStorage.setItem(
-        STORAGE.requests,
-        JSON.stringify(requests)
+          STORAGE.requests,
+          JSON.stringify(requests)
       );
 
       formModal.close();
 
-      showToast('Seu interesse ficou salvo neste navegador.');
+      showToast('Seu interesse foi registrado!');
     }
   });
 
-  $('#menuToggle').addEventListener('click', () => {
-    const nav = $('#mainNav');
-    const open = nav.classList.toggle('open');
-
-    $('#menuToggle').setAttribute(
-      'aria-expanded',
-      String(open)
-    );
-  });
-
-  $$('#mainNav a').forEach(link => {
-    link.addEventListener('click', () => {
-      $('#mainNav').classList.remove('open');
-
-      $('#menuToggle').setAttribute(
-        'aria-expanded',
-        'false'
-      );
-    });
-  });
-
+  // Inicialização da página.
   populateCities();
   renderPets();
+  carregarPets();
 
 })();

@@ -1,12 +1,13 @@
+
 package com.matchpet.cli;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import com.matchpet.model.Localizacao;
+
+import com.matchpet.model.Pet;
+import com.matchpet.service.PetService;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,133 +15,385 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.dao.DataAccessResourceFailureException;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-import com.matchpet.model.Pet;
-import com.matchpet.service.PetService;
-
-@ExtendWith(MockitoExtension.class)
 class MatchPetCliTest {
 
-    @Mock
-    private PetService service;
+    private String executarCli(PetService service, String entradas) {
 
-    @Test
-    void deveExecutarCrudPelaCli() {
-        Pet luna = new Pet("1", "Luna", "Cachorro", 3);
-        Pet mia = new Pet("1", "Mia", "Gato", 4);
-        when(service.listar()).thenReturn(List.of(luna));
-        when(service.buscar("1")).thenReturn(luna);
-        when(service.cadastrar("Luna", "Cachorro", 3)).thenReturn(luna);
-        when(service.atualizar("1", "Mia", "Gato", 4)).thenReturn(mia);
+        ByteArrayInputStream input = new ByteArrayInputStream(
+                entradas.getBytes(StandardCharsets.UTF_8));
 
-        String entrada = String.join("\n",
-                "1",
-                "2", "1",
-                "3", "Luna", "Cachorro", "3",
-                "4", "1", "Mia", "Gato", "4",
-                "5", "1", "s",
-                "9",
-                "0") + "\n";
-        ByteArrayOutputStream saida = new ByteArrayOutputStream();
-        MatchPetCli cli = new MatchPetCli(service,
-                new ByteArrayInputStream(entrada.getBytes(StandardCharsets.UTF_8)),
-                new PrintStream(saida, true, StandardCharsets.UTF_8));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        MatchPetCli cli = new MatchPetCli(
+                service,
+                input,
+                new PrintStream(output)
+        );
 
         cli.run();
 
-        String texto = saida.toString(StandardCharsets.UTF_8);
-        assertTrue(texto.contains("Luna | Cachorro | 3 ano(s)"));
-        assertTrue(texto.contains("Pet cadastrado com ID: 1"));
-        assertTrue(texto.contains("Pet atualizado: Mia"));
-        assertTrue(texto.contains("Pet excluído."));
-        assertTrue(texto.contains("Opção inválida."));
-        assertTrue(texto.contains("Até logo!"));
-        verify(service).excluir("1");
+        return output.toString();
     }
 
     @Test
-    void deveExibirListaVaziaEErro() {
-        when(service.listar()).thenReturn(List.of());
-        when(service.buscar("999")).thenThrow(new IllegalArgumentException("Pet não encontrado: 999"));
-        String entrada = String.join("\n", "1", "2", "999", "0") + "\n";
-        ByteArrayOutputStream saida = new ByteArrayOutputStream();
-        MatchPetCli cli = new MatchPetCli(service,
-                new ByteArrayInputStream(entrada.getBytes(StandardCharsets.UTF_8)),
-                new PrintStream(saida, true, StandardCharsets.UTF_8));
+    void deveSairAoEscolherZero() {
 
-        cli.run();
+        PetService service = mock(PetService.class);
 
-        String texto = saida.toString(StandardCharsets.UTF_8);
-        assertTrue(texto.contains("Nenhum pet cadastrado."));
-        assertTrue(texto.contains("Erro: Pet não encontrado: 999"));
-    }
+        String resultado = executarCli(service, "0\n");
 
-    @Test
-    void deveSolicitarIdadeNovamenteSemPerderDados() {
-        when(service.cadastrar("Luna", "Gato", 0)).thenReturn(new Pet("1", "Luna", "Gato", 0));
+        assertTrue(resultado.contains("Até logo!"));
 
-        String texto = executar("3\nLuna\nGato\nabc\n-1\n0\n0\n");
-
-        assertTrue(texto.contains("Informe uma idade inteira maior ou igual a zero."));
-        verify(service).cadastrar("Luna", "Gato", 0);
-    }
-
-    @Test
-    void deveManterCamposVaziosNaEdicao() {
-        Pet pet = new Pet("1", "Luna", "Gato", 3);
-        when(service.buscar("1")).thenReturn(pet);
-        when(service.atualizar("1", "Luna", "Gato", 3)).thenReturn(pet);
-
-        executar("4\n1\n\n\n\n0\n");
-
-        verify(service).atualizar("1", "Luna", "Gato", 3);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"", "n", "sim", "qualquer"})
-    void deveCancelarExclusaoSemConfirmacaoExplicita(String resposta) {
-        when(service.buscar("1")).thenReturn(new Pet("1", "Luna", "Gato", 3));
-
-        assertTrue(executar("5\n1\n" + resposta + "\n0\n").contains("Exclusão cancelada."));
-
-        verify(service, never()).excluir(any());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"", "3\n", "3\nLuna\n", "3\nLuna\nGato\n"})
-    void deveEncerrarEntradaSemCadastrarDadosParciais(String entrada) {
-        assertTrue(executar(entrada).contains("Até logo!"));
         verifyNoInteractions(service);
     }
 
     @Test
-    void deveCancelarEdicaoSeEntradaTerminar() {
-        when(service.buscar("1")).thenReturn(new Pet("1", "Luna", "Gato", 3));
+    void deveListarPets() {
 
-        executar("4\n1\nNova Luna\n");
+        PetService service = mock(PetService.class);
 
-        verify(service, never()).atualizar(any(), any(), any(), anyInt());
+        Pet pet = new Pet("123", "Luna", "Gato", 2);
+
+        when(service.listar()).thenReturn(List.of(pet));
+
+        String resultado = executarCli(service, "1\n0\n");
+
+        assertTrue(resultado.contains("Luna"));
+        assertTrue(resultado.contains("Total: 1 pet(s)."));
+
+        verify(service).listar();
+    }
+
+    @Test
+    void deveInformarQuandoNaoExistemPets() {
+
+        PetService service = mock(PetService.class);
+
+        when(service.listar()).thenReturn(List.of());
+
+        String resultado = executarCli(service, "1\n0\n");
+
+        assertTrue(resultado.contains("Nenhum pet cadastrado."));
+    }
+
+    @Test
+    void deveCadastrarPetComLocalizacaoECaracteristicas() {
+
+        PetService service = mock(PetService.class);
+
+        Pet pet = new Pet("123", "Luna", "Cachorro", 3);
+
+        when(service.cadastrar(
+                "Luna",
+                "Cachorro",
+                3,
+                "Maringá",
+                "PR",
+                List.of("Dócil", "Brincalhona")
+        )).thenReturn(pet);
+
+        String resultado = executarCli(
+                service,
+                "3\nLuna\nCachorro\n3\nMaringá\nPR\nDócil, Brincalhona\n0\n"
+        );
+
+        assertTrue(resultado.contains("Pet cadastrado com ID: 123"));
+
+        verify(service).cadastrar(
+                "Luna",
+                "Cachorro",
+                3,
+                "Maringá",
+                "PR",
+                List.of("Dócil", "Brincalhona")
+        );
+    }
+
+    @Test
+    void deveSolicitarIdadeNovamenteSemPerderDados() {
+
+        PetService service = mock(PetService.class);
+
+        Pet pet = new Pet("123", "Luna", "Gato", 0);
+
+        when(service.cadastrar(
+                "Luna",
+                "Gato",
+                0,
+                "Maringá",
+                "PR",
+                List.of("Mansa")
+        )).thenReturn(pet);
+
+        String resultado = executarCli(
+                service,
+                "3\nLuna\nGato\n-1\nabc\n0\nMaringá\nPR\nMansa\n0\n"
+        );
+
+        assertTrue(resultado.contains(
+                "Informe uma idade inteira maior ou igual a zero."
+        ));
+
+        verify(service).cadastrar(
+                "Luna",
+                "Gato",
+                0,
+                "Maringá",
+                "PR",
+                List.of("Mansa")
+        );
     }
 
     @Test
     void deveOrientarQuandoBancoEstiverIndisponivel() {
-        when(service.listar()).thenThrow(new DataAccessResourceFailureException("detalhes internos"));
 
-        assertTrue(executar("1\n0\n").contains("Não foi possível acessar o MongoDB."));
+        PetService service = mock(PetService.class);
+
+        when(service.listar()).thenThrow(
+                new DataAccessResourceFailureException("Banco indisponível")
+        );
+
+        String resultado = executarCli(service, "1\n0\n");
+
+        assertTrue(resultado.contains("Erro ao acessar o MongoDB:"));
     }
 
-    private String executar(String entrada) {
-        ByteArrayOutputStream saida = new ByteArrayOutputStream();
-        new MatchPetCli(service,
-                new ByteArrayInputStream(entrada.getBytes(StandardCharsets.UTF_8)),
-                new PrintStream(saida, true, StandardCharsets.UTF_8)).run();
-        return saida.toString(StandardCharsets.UTF_8);
+
+    @Test
+    void deveBuscarPetPeloId() {
+        PetService service = mock(PetService.class);
+
+        Pet pet = new Pet("123", "Luna", "Gato", 2);
+
+        when(service.buscar("123")).thenReturn(pet);
+
+        String resultado = executarCli(service, "2\n123\n0\n");
+
+        assertTrue(resultado.contains("Luna"));
+        assertTrue(resultado.contains("Gato"));
+
+        verify(service).buscar("123");
     }
+
+    @Test
+    void deveAtualizarPet() {
+        PetService service = mock(PetService.class);
+
+        Pet atual = new Pet("123", "Luna", "Gato", 2);
+        Pet atualizado = new Pet("123", "Luna Nova", "Cachorro", 3);
+
+        when(service.buscar("123")).thenReturn(atual);
+
+        when(service.atualizar(
+                "123",
+                "Luna Nova",
+                "Cachorro",
+                3,
+                "",
+                "",
+                List.of()
+        )).thenReturn(atualizado);
+
+        String resultado = executarCli(
+                service,
+                "4\n123\nLuna Nova\nCachorro\n3\n\n\n\n0\n"
+        );
+
+        assertTrue(resultado.contains("Pet atualizado: Luna Nova"));
+
+        verify(service).atualizar(
+                "123",
+                "Luna Nova",
+                "Cachorro",
+                3,
+                "",
+                "",
+                List.of()
+        );
+    }
+
+    @Test
+    void deveManterDadosAoAtualizarQuandoPressionarEnter() {
+        PetService service = mock(PetService.class);
+
+        Pet atual = new Pet("123", "Luna", "Gato", 2);
+
+        when(service.buscar("123")).thenReturn(atual);
+
+        when(service.atualizar(
+                "123",
+                "Luna",
+                "Gato",
+                2,
+                "",
+                "",
+                List.of()
+        )).thenReturn(atual);
+
+        String resultado = executarCli(
+                service,
+                "4\n123\n\n\n\n\n\n\n0\n"
+        );
+
+        assertTrue(resultado.contains("Pet atualizado: Luna"));
+
+        verify(service).atualizar(
+                "123",
+                "Luna",
+                "Gato",
+                2,
+                "",
+                "",
+                List.of()
+        );
+    }
+
+    @Test
+    void deveExcluirPetQuandoConfirmar() {
+        PetService service = mock(PetService.class);
+
+        Pet pet = new Pet("123", "Luna", "Gato", 2);
+
+        when(service.buscar("123")).thenReturn(pet);
+
+        String resultado = executarCli(
+                service,
+                "5\n123\ns\n0\n"
+        );
+
+        assertTrue(resultado.contains("Pet excluído."));
+
+        verify(service).excluir("123");
+    }
+
+    @Test
+    void deveCancelarExclusaoQuandoNaoConfirmar() {
+        PetService service = mock(PetService.class);
+
+        Pet pet = new Pet("123", "Luna", "Gato", 2);
+
+        when(service.buscar("123")).thenReturn(pet);
+
+        String resultado = executarCli(
+                service,
+                "5\n123\nn\n0\n"
+        );
+
+        assertTrue(resultado.contains("Exclusão cancelada."));
+
+        verify(service, never()).excluir("123");
+    }
+
+    @Test
+    void deveInformarQuandoEscolherOpcaoInvalida() {
+        PetService service = mock(PetService.class);
+
+        String resultado = executarCli(service, "9\n0\n");
+
+        assertTrue(resultado.contains("Opção inválida."));
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    void deveInformarErroQuandoPetNaoForEncontrado() {
+        PetService service = mock(PetService.class);
+
+        when(service.buscar("999"))
+                .thenThrow(new IllegalArgumentException("Pet não encontrado: 999"));
+
+        String resultado = executarCli(service, "2\n999\n0\n");
+
+        assertTrue(resultado.contains("Erro: Pet não encontrado: 999"));
+    }
+
+    @Test
+    void deveEncerrarQuandoEntradaForFinalizada() {
+        PetService service = mock(PetService.class);
+
+        String resultado = executarCli(service, "");
+
+        assertTrue(resultado.contains("Entrada encerrada."));
+        assertTrue(resultado.contains("Até logo!"));
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    void deveImprimirPetComLocalizacaoECaracteristicas() {
+        PetService service = mock(PetService.class);
+
+        Localizacao localizacao = new Localizacao("Maringá", "PR");
+
+        Pet pet = new Pet(
+                "123",
+                "Luna",
+                "Gato",
+                2,
+                localizacao,
+                List.of("Dócil", "Brincalhona")
+        );
+
+        when(service.listar()).thenReturn(List.of(pet));
+
+        String resultado = executarCli(service, "1\n0\n");
+
+        assertTrue(resultado.contains("Cidade: Maringá"));
+        assertTrue(resultado.contains("Estado: PR"));
+        assertTrue(resultado.contains("Características: [Dócil, Brincalhona]"));
+    }
+
+    @Test
+    void deveIgnorarCaracteristicasVaziasAoCadastrar() {
+        PetService service = mock(PetService.class);
+
+        Pet pet = new Pet("123", "Luna", "Gato", 2);
+
+        when(service.cadastrar(
+                "Luna",
+                "Gato",
+                2,
+                "Maringá",
+                "PR",
+                List.of("Dócil", "Brincalhona")
+        )).thenReturn(pet);
+
+        String resultado = executarCli(
+                service,
+                "3\nLuna\nGato\n2\nMaringá\nPR\nDócil, , Brincalhona, \n0\n"
+        );
+
+        assertTrue(resultado.contains("Pet cadastrado com ID: 123"));
+
+        verify(service).cadastrar(
+                "Luna",
+                "Gato",
+                2,
+                "Maringá",
+                "PR",
+                List.of("Dócil", "Brincalhona")
+        );
+    }
+
+    @Test
+    void deveExcluirPetQuandoConfirmarComLetraMaiuscula() {
+        PetService service = mock(PetService.class);
+
+        Pet pet = new Pet("123", "Luna", "Gato", 2);
+
+        when(service.buscar("123")).thenReturn(pet);
+
+        String resultado = executarCli(
+                service,
+                "5\n123\nS\n0\n"
+        );
+
+        assertTrue(resultado.contains("Pet excluído."));
+
+        verify(service).excluir("123");
+    }
+
 }

@@ -1,16 +1,18 @@
+
 spring:
   application:
     name: matchpet
+
   main:
     banner-mode: off
-    web-application-type: none
+
   data:
     mongodb:
       uri: ${MONGODB_URI:mongodb://localhost:27017/matchpet}
 
 matchpet:
   cli:
-    enabled: true
+    enabled: false
 
 logging:
   level:
