@@ -1,8 +1,14 @@
 # API REST do MatchPet
 
+<<<<<<< HEAD
 O backend disponibiliza uma API REST em `http://localhost:8080`.
 
 ## Pets
+=======
+O backend agora disponibiliza uma API REST em `http://localhost:8080/api/pets`.
+
+## Rotas
+>>>>>>> fddfdd0bbb3541e3e55a421703161c20c15c3a2d
 
 | Método | Rota | Ação |
 |---|---|---|
@@ -12,6 +18,7 @@ O backend disponibiliza uma API REST em `http://localhost:8080`.
 | PUT | `/api/pets/{id}` | Atualiza um pet |
 | DELETE | `/api/pets/{id}` | Exclui um pet |
 
+<<<<<<< HEAD
 ## Adoções
 
 | Método | Rota | Ação |
@@ -65,10 +72,43 @@ O campo `status` aceita `APROVADA` ou `REJEITADA`. Apenas solicitações `PENDEN
 - `404 Not Found`: usuário, pet ou solicitação não encontrado.
 - `409 Conflict`: solicitação duplicada ou conflito de adoção.
 
+=======
+## Exemplo de cadastro
+
+```json
+{
+  "name": "Amora",
+  "species": "Cachorro",
+  "breed": "Vira-lata",
+  "age": 2,
+  "size": "Médio",
+  "sex": "Fêmea",
+  "city": "Maringá",
+  "state": "PR",
+  "image": "https://exemplo.com/amora.jpg",
+  "description": "Carinhosa e brincalhona.",
+  "shelter": "ONG Exemplo",
+  "status": "Pronta para adoção",
+  "ageGroup": "adulto",
+  "traits": ["Carinhosa", "Vacinada"]
+}
+```
+
+>>>>>>> fddfdd0bbb3541e3e55a421703161c20c15c3a2d
 ## Como executar
 
 1. Configure `MONGODB_URI` se o MongoDB não estiver em `mongodb://localhost:27017/matchpet`.
 2. Execute `./mvnw spring-boot:run` (Windows: `mvnw.cmd spring-boot:run`).
+<<<<<<< HEAD
 3. Teste `GET http://localhost:8080/api/pets` ou `GET http://localhost:8080/api/adocoes`.
 
 O modo CLI permanece desativado por padrão para que o processo execute como servidor HTTP.
+=======
+3. Teste `GET http://localhost:8080/api/pets`.
+
+O modo CLI foi desativado por padrão para que o processo permaneça executando como servidor HTTP. A classe `MatchPetCli` foi mantida no projeto.
+
+A API aceita chamadas de origens locais comuns do Live Server (`localhost:5500`, `127.0.0.1:5500`) e `localhost:3000`. Se o frontend usar outra porta, ajuste a anotação `@CrossOrigin` do `PetController`.
+
+Nesta primeira etapa, o campo `image` recebe uma URL. O upload de arquivos locais será tratado em uma etapa seguinte.
+>>>>>>> fddfdd0bbb3541e3e55a421703161c20c15c3a2d

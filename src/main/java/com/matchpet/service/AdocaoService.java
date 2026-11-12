@@ -1,3 +1,4 @@
+
 package com.matchpet.service;
 
 import java.time.LocalDateTime;
@@ -48,14 +49,16 @@ public class AdocaoService {
 
         if (adocaoRepository.existsByPetIdAndStatusIgnoreCase(petId, APROVADA)) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Este pet já possui uma adoção aprovada.");
+                    HttpStatus.CONFLICT,
+                    "Este pet já possui uma adoção aprovada.");
         }
 
         boolean jaExisteSolicitacaoAtiva = adocaoRepository
                 .findByUsuarioIdAndPetId(usuarioId, petId)
                 .stream()
-                .anyMatch(solicitacao -> PENDENTE.equalsIgnoreCase(solicitacao.getStatus())
-                        || APROVADA.equalsIgnoreCase(solicitacao.getStatus()));
+                .anyMatch(solicitacao ->
+                        PENDENTE.equalsIgnoreCase(solicitacao.getStatus())
+                                || APROVADA.equalsIgnoreCase(solicitacao.getStatus()));
 
         if (jaExisteSolicitacaoAtiva) {
             throw new ResponseStatusException(
@@ -63,9 +66,14 @@ public class AdocaoService {
                     "Já existe uma solicitação pendente ou aprovada para este usuário e pet.");
         }
 
-        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        DateTimeFormatter formatoData =
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
         String data = LocalDateTime.now().format(formatoData);
-        Adocao adocao = new Adocao(null, usuarioId, petId, data, PENDENTE);
+
+        Adocao adocao = new Adocao(
+                null, usuarioId, petId, data, PENDENTE);
+
         return adocaoRepository.save(adocao);
     }
 
@@ -76,28 +84,36 @@ public class AdocaoService {
     public Adocao buscar(String id) {
         if (id == null || id.isBlank()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Informe o ID da solicitação.");
+                    HttpStatus.BAD_REQUEST,
+                    "Informe o ID da solicitação.");
         }
 
         return adocaoRepository.findById(id.trim())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Solicitação de adoção não encontrada."));
+                        HttpStatus.NOT_FOUND,
+                        "Solicitação de adoção não encontrada."));
     }
 
     public List<Adocao> listarPorUsuario(String usuarioId) {
         if (usuarioId == null || usuarioId.isBlank()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Informe o ID do usuário.");
+                    HttpStatus.BAD_REQUEST,
+                    "Informe o ID do usuário.");
         }
-        return adocaoRepository.findByUsuarioIdOrderByDataDesc(usuarioId.trim());
+
+        return adocaoRepository.findByUsuarioIdOrderByDataDesc(
+                usuarioId.trim());
     }
 
     public List<Adocao> listarPorPet(String petId) {
         if (petId == null || petId.isBlank()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Informe o ID do pet.");
+                    HttpStatus.BAD_REQUEST,
+                    "Informe o ID do pet.");
         }
-        return adocaoRepository.findByPetIdOrderByDataDesc(petId.trim());
+
+        return adocaoRepository.findByPetIdOrderByDataDesc(
+                petId.trim());
     }
 
     public Adocao atualizarStatus(String id, String novoStatus) {
@@ -112,7 +128,7 @@ public class AdocaoService {
 
         if (APROVADA.equals(status)
                 && adocaoRepository.existsByPetIdAndStatusIgnoreCaseAndIdNot(
-                        adocao.getPetId(), APROVADA, adocao.getId())) {
+                adocao.getPetId(), APROVADA, adocao.getId())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Este pet já possui outra solicitação aprovada.");
@@ -129,22 +145,28 @@ public class AdocaoService {
         }
 
         String normalizado = status.trim().toUpperCase(Locale.ROOT);
-        if (!APROVADA.equals(normalizado) && !REJEITADA.equals(normalizado)) {
+
+        if (!APROVADA.equals(normalizado)
+                && !REJEITADA.equals(normalizado)) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Status inválido. Utilize APROVADA ou REJEITADA.");
         }
+
         return normalizado;
     }
 
     private void validarIdentificadores(String usuarioId, String petId) {
         if (usuarioId == null || usuarioId.isBlank()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "O ID do usuário é obrigatório.");
+                    HttpStatus.BAD_REQUEST,
+                    "O ID do usuário é obrigatório.");
         }
+
         if (petId == null || petId.isBlank()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "O ID do pet é obrigatório.");
+                    HttpStatus.BAD_REQUEST,
+                    "O ID do pet é obrigatório.");
         }
     }
 }
