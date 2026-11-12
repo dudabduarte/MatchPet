@@ -299,29 +299,27 @@ A cobertura mínima exigida pela AEP é de **70% sobre o código da PoC**.
 
 O percentual obtido deve ser conferido no relatório gerado e informado nesta documentação após a execução dos testes da versão final.
 
-**Cobertura obtida:** [informar percentual real da versão final].
+**Cobertura obtida:** 76%.
 
 ## 12. Versionamento
 
 O código-fonte do MatchPet está disponível no GitHub:
 
-https://github.com/Livia-Maschietto-Boneti/MatchPet_
+https://github.com/dudabduarte/MatchPet
 
 O projeto utiliza Git para controle de versão e registro das alterações realizadas durante o desenvolvimento.
 
-**Versão da segunda entrega:** [informar tag, release ou commit correspondente à entrega final].
+**Versão da segunda entrega:** https://github.com/dudabduarte/MatchPet
 
 ## 13. Metodologia de trabalho
 
-O desenvolvimento foi organizado de maneira incremental, com implementação, testes e ajustes realizados ao longo das etapas do projeto.
+O desenvolvimento foi organizado de maneira incremental, com implementação, testes e ajustes realizados ao longo das etapas do projeto, utilizando a metodologia Kanban.
 
 As atividades devem ser acompanhadas por meio de um quadro de tarefas, permitindo visualizar:
 
 - Atividades pendentes.
 - Atividades em andamento.
 - Atividades concluídas.
-
-**Quadro de tarefas:** [inserir link do quadro utilizado pela equipe].
 
 ## 14. Resultados esperados
 
