@@ -328,3 +328,48 @@ As atividades devem ser acompanhadas por meio de um quadro de tarefas, permitind
 O MatchPet busca demonstrar a aplicação prática de conceitos de Engenharia de Software, programação orientada a objetos e persistência de dados em bancos NoSQL.
 
 Com a evolução da PoC, espera-se apresentar uma aplicação funcional, com múltiplas coleções, documentos complexos, relacionamentos entre entidades, testes automatizados e documentação suficiente para instalação, execução e avaliação do projeto.
+
+## 15. Metodologia utilizada
+# Quadro de Tarefas – Kanban | MatchPet
+
+**Projeto:** MatchPet  
+**Disciplina:** Engenharia de Software  
+**Atividade:** AEP 2026.2 – Segunda Entrega  
+**Metodologia:** Kanban
+
+## 16. Concluído
+
+| ID | Tarefa | Descrição | Status |
+|---|---|---|---|
+| K01 | Implementar múltiplas coleções | Organização das coleções `usuarios`, `pets` e `adocoes`. | Concluído |
+| K02 | Implementar relacionamentos | Relacionamento entre usuários, animais e adoções por identificadores. | Concluído |
+| K03 | Implementar documentos complexos | Utilização de objetos aninhados e listas de subdocumentos. | Concluído |
+| K04 | Desenvolver funcionalidades de usuários | Implementação do gerenciamento de usuários. | Concluído |
+| K05 | Desenvolver funcionalidades de adoção | Implementação do gerenciamento das solicitações de adoção. | Concluído |
+| K06 | Validar a persistência | Verificação do armazenamento dos dados após reiniciar a aplicação. | Concluído |
+| K07 | Ampliar os testes automatizados | Implementação de testes para as funcionalidades do sistema. | Concluído |
+| K08 | Atingir cobertura mínima de 70% | Verificação da cobertura dos testes por meio do JaCoCo. | Concluído |
+| K09 | Atualizar o README | Documentação das tecnologias, arquitetura, banco de dados e execução. | Concluído |
+| K10 | Organizar a documentação técnica | Organização dos documentos necessários para avaliação. | Concluído |
+| K11 | Organizar o quadro de tarefas | Registro e acompanhamento das atividades do projeto. | Concluído |
+| K12 | Preparar o vídeo de demonstração | Preparação da apresentação da versão final da PoC. | Concluído |
+| K13 | Identificar a versão final | Identificação da versão correspondente à segunda entrega no GitHub. | Concluído |
+| K14 | Configurar o MongoDB local | Configuração do ambiente MongoDB Community Server. | Concluído |
+| K15 | Validar a conexão com o backend | Comunicação entre Spring Boot e MongoDB. | Concluído |
+| K16 | Validar a integração frontend e backend | Testes de comunicação entre a interface e a API. | Concluído |
+| K17 | Criar o repositório GitHub | Criação e organização do repositório do projeto. | Concluído |
+| K18 | Desenvolver a estrutura inicial do backend | Implementação da aplicação Java com Spring Boot. | Concluído |
+| K19 | Implementar o modelo Pet | Criação da estrutura de dados dos animais. | Concluído |
+| K20 | Implementar PetRepository | Integração com Spring Data MongoDB. | Concluído |
+| K21 | Implementar PetService | Organização das operações e regras de negócio. | Concluído |
+| K22 | Implementar PetController | Disponibilização dos endpoints REST. | Concluído |
+| K23 | Integrar frontend e API | Comunicação entre JavaScript e backend. | Concluído |
+| K24 | Implementar operações CRUD de pets | Cadastro, listagem, busca, atualização e exclusão. | Concluído |
+| K25 | Implementar testes automatizados | Criação dos testes unitários do projeto. | Concluído |
+| K26 | Versionar as alterações | Registro e envio das alterações para o GitHub. | Concluído |
+
+## 17. Resultado do quadro
+
+Todas as atividades estão registradas na coluna **Concluído**, representando o encerramento das tarefas planejadas para o desenvolvimento do MatchPet na AEP 2026.2.
+
+**Status geral do projeto:** Concluído.
