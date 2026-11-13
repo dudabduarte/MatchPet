@@ -228,7 +228,7 @@ $env:MONGODB_URI = "mongodb://localhost:27017/matchpet"
 ### 10.2 Clonar o repositório
 
 ```powershell
-git clone https://github.com/Livia-Maschietto-Boneti/MatchPet_.git
+git clone https://github.com/dudabduarte/MatchPet.git
 ```
 
 Entre na pasta do projeto:
