@@ -1,4 +1,4 @@
-# MatchPet 🐾
+<img width="1917" height="851" alt="image" src="https://github.com/user-attachments/assets/7c598f8c-c76a-41d7-94bd-dccf38895fb1" /># MatchPet 🐾
 
 ## 1. Sobre o projeto
 
@@ -292,7 +292,7 @@ A execução verifica os testes automatizados e gera o relatório de cobertura c
 Após a execução do comando, o relatório HTML do JaCoCo pode ser consultado em:
 
 ```text
-target/site/jacoco/index.html
+Start-Process .\target\site\jacoco\index.html
 ```
 
 A cobertura mínima exigida pela AEP é de **70% sobre o código da PoC**.
