@@ -234,7 +234,7 @@ git clone https://github.com/dudabduarte/MatchPet.git
 Entre na pasta do projeto:
 
 ```powershell
-cd MatchPet_
+cd MatchPet
 ```
 
 ### 10.3 Executar o backend
