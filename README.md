@@ -1,4 +1,4 @@
-<img width="1917" height="851" alt="image" src="https://github.com/user-attachments/assets/7c598f8c-c76a-41d7-94bd-dccf38895fb1" /># MatchPet 🐾
+# MatchPet 🐾
 
 ## 1. Sobre o projeto
 
